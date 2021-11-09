@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import icon from './icons/Icon.svg';
 import { CheckboxProps } from './types';
@@ -8,19 +8,33 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   onChange,
   value,
 }) => {
+  const [isFocused, setIsFocused] = useState<boolean>(false);
+
   return (
     <Wrap>
       <StyledLabel>
-        <StyledInput type="checkbox" onChange={onChange} name={name} />
-        <CheckboxEmulator isChecked={value} />
+        <StyledInput
+          type="checkbox"
+          onChange={onChange}
+          name={name}
+          onFocus={() => {
+            setIsFocused(true);
+          }}
+          onBlur={() => {
+            setIsFocused(false);
+          }}
+        />
+        <CheckboxEmulator isChecked={value} isFocused={isFocused} />
       </StyledLabel>
     </Wrap>
   );
 };
 
 const StyledInput = styled.input`
-  visibility: hidden;
   position: absolute;
+  opacity: 0;
+  width: 28px;
+  height: 28px;
 `;
 
 const checkboxEmulatorIsCheckedStyledOverride = css`
@@ -29,15 +43,17 @@ const checkboxEmulatorIsCheckedStyledOverride = css`
   background-repeat: no-repeat;
 `;
 
-const CheckboxEmulator = styled.div<{ isChecked: boolean }>`
+const CheckboxEmulator = styled.div<{ isChecked: boolean; isFocused: boolean }>`
   cursor: pointer;
-  background: #ffffff;
+  background-color: #ffffff;
   border: 1px solid #dbe2ea;
   box-sizing: border-box;
   box-shadow: 0 4px 8px rgba(44, 39, 56, 0.04);
   border-radius: 4px;
   width: 28px;
   height: 28px;
+
+  ${({ isFocused }) => (isFocused ? 'border: 2px solid #0880ae;' : '')}
 
   ${({ isChecked }) =>
     isChecked ? checkboxEmulatorIsCheckedStyledOverride : ''}
