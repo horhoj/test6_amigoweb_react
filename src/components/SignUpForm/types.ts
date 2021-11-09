@@ -6,8 +6,12 @@ import {
   VALIDATION_ERROR_TELEPHONE,
 } from '../../config/validationMessages';
 
+//телефон может содержать любое кол-во символов типа ( ) -
+//но не более 11 цифр
+//+ должен быть первым
+
 const TELEPHONE_REG_EXP = new RegExp(
-  '^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$',
+  '^(?!(.*?\\d){12})[\\+]?[0-9,\\-,\\(,\\)]*$',
 );
 
 export const signUpValuesSchema = yup.object({
