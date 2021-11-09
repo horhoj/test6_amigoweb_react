@@ -7,8 +7,6 @@ export const Input: React.FC<InputProps> = ({
   onChange,
   label,
   placeholder,
-  error,
-  showError,
   name,
   onBlur,
   type,
@@ -27,13 +25,6 @@ export const Input: React.FC<InputProps> = ({
           name={name}
           onBlur={onBlur}
         />
-      </div>
-      <div>
-        {showError ? (
-          <Error>{error ? error : <>&nbsp;</>}</Error>
-        ) : (
-          <Error>&nbsp;</Error>
-        )}
       </div>
     </Wrap>
   );
@@ -75,13 +66,4 @@ const Label = styled.label`
   font-size: 16px;
   line-height: 21px;
   color: #756f86;
-`;
-
-const Error = styled.div`
-  font-style: normal;
-  font-weight: normal;
-  font-size: 14px;
-  line-height: 18px;
-  color: #ff7171;
-  margin-top: 8px;
 `;

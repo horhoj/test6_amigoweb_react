@@ -5,6 +5,7 @@ import { Input } from '../Input';
 import { Button } from '../Button';
 import { Dropdown } from '../Dropdown';
 import { Checkbox } from '../Checkbox';
+import { ErrorMsg } from '../ErrorMsg';
 import { SignUpValues, signUpValuesSchema } from './types';
 
 const initialValues: SignUpValues = {
@@ -48,6 +49,8 @@ export const SignUpForm: React.FC = () => {
             label={'Имя'}
             placeholder={'Введите Ваше имя'}
             {...formik.getFieldProps('name')}
+          />
+          <ErrorMsg
             showError={
               Boolean(formik.touched.name) && Boolean(formik.errors.name)
             }
@@ -60,6 +63,8 @@ export const SignUpForm: React.FC = () => {
             label={'Email'}
             placeholder={'Введите Ваш email'}
             {...formik.getFieldProps('email')}
+          />
+          <ErrorMsg
             showError={
               Boolean(formik.touched.email) && Boolean(formik.errors.email)
             }
@@ -72,6 +77,8 @@ export const SignUpForm: React.FC = () => {
             label={'Телефон'}
             placeholder={'Введите номер телефона'}
             {...formik.getFieldProps('telephone')}
+          />
+          <ErrorMsg
             showError={
               Boolean(formik.touched.telephone) &&
               Boolean(formik.errors.telephone)
