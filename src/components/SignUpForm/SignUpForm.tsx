@@ -94,6 +94,15 @@ export const SignUpForm: React.FC = () => {
             onChange={(value) => formik.setFieldValue('language', value)}
             label={'Язык'}
             placeholder={'Язык'}
+            onBlur={formik.getFieldProps('language').onBlur}
+            name={formik.getFieldProps('language').name}
+          />
+          <ErrorMsg
+            showError={
+              Boolean(formik.touched.language) &&
+              Boolean(formik.errors.language)
+            }
+            error={formik.errors.language}
           />
         </ElementWrap>
         <ElementWrap marginTop={31}>
@@ -103,8 +112,14 @@ export const SignUpForm: React.FC = () => {
               Принимаю <Link href="#">условия</Link> использования
             </div>
           </TermsWrap>
+          <ErrorMsg
+            showError={
+              Boolean(formik.touched.accept) && Boolean(formik.errors.accept)
+            }
+            error={formik.errors.accept}
+          />
         </ElementWrap>
-        <ElementWrap marginTop={38}>
+        <ElementWrap marginTop={16}>
           <Button
             caption={'Зарегистрироваться'}
             disabled={!formik.isValid}

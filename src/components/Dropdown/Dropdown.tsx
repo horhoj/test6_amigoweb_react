@@ -11,6 +11,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
   onChange,
   label,
   placeholder,
+  onBlur,
+  name,
 }) => {
   const [isShowItemList, setIsShowItemList] = useState<boolean>(false);
 
@@ -108,6 +110,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
           type={'button'}
           onClick={handleBtnClk}
           isPlaceholderTextStyle={!value}
+          onBlur={onBlur}
+          name={name}
         >
           {value ? value : placeholder}
         </StyledButton>

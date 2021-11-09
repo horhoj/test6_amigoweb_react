@@ -7,6 +7,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   name,
   onChange,
   value,
+  onBlur,
 }) => {
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
@@ -20,8 +21,9 @@ export const Checkbox: React.FC<CheckboxProps> = ({
           onFocus={() => {
             setIsFocused(true);
           }}
-          onBlur={() => {
+          onBlur={(e) => {
             setIsFocused(false);
+            onBlur(e);
           }}
         />
         <CheckboxEmulator isChecked={value} isFocused={isFocused} />

@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 import {
+  VALIDATION_ERROR_ACCEPT_LIC,
   VALIDATION_ERROR_EMAIL,
   VALIDATION_ERROR_REQUIRED,
   VALIDATION_ERROR_TELEPHONE,
@@ -19,8 +20,8 @@ export const signUpValuesSchema = yup.object({
     .string()
     .matches(TELEPHONE_REG_EXP, VALIDATION_ERROR_TELEPHONE)
     .required(VALIDATION_ERROR_REQUIRED),
-  language: yup.string(),
-  accept: yup.boolean().oneOf([true]).required(),
+  language: yup.string().required(VALIDATION_ERROR_REQUIRED),
+  accept: yup.boolean().oneOf([true], VALIDATION_ERROR_ACCEPT_LIC).required(),
 });
 
 export interface SignUpValues extends yup.Asserts<typeof signUpValuesSchema> {}
