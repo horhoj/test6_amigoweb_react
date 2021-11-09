@@ -6,9 +6,10 @@ import { Button } from '../Button';
 import { Dropdown } from '../Dropdown';
 import { Checkbox } from '../Checkbox';
 import { ErrorMsg } from '../ErrorMsg';
+import { DropdownItem } from '../Dropdown/types';
 import { SignUpValues, signUpValuesSchema } from './types';
 
-const initialValues: SignUpValues = {
+const INITIAL_VALUES: SignUpValues = {
   name: '',
   email: '',
   telephone: '',
@@ -16,16 +17,16 @@ const initialValues: SignUpValues = {
   accept: false,
 };
 
-const languageList: string[] = [
-  'Русский',
-  'Английский',
-  'Китайский',
-  'Испанский',
+const LANGUAGE_LIST: DropdownItem[] = [
+  { id: 1, value: 'russian', title: 'Русский' },
+  { id: 2, value: 'english', title: 'Английский' },
+  { id: 3, value: 'chinese', title: 'Китайский' },
+  { id: 4, value: 'spanish', title: 'Испанский' },
 ];
 
 export const SignUpForm: React.FC = () => {
   const formikConfig: FormikConfig<SignUpValues> = {
-    initialValues,
+    initialValues: INITIAL_VALUES,
     onSubmit: (values) => {
       const msg = JSON.stringify(values, null, 2);
       alert(msg);
@@ -88,9 +89,8 @@ export const SignUpForm: React.FC = () => {
         </ElementWrap>
         <ElementWrap marginTop={8}>
           <Dropdown
-            itemList={languageList}
-            defaultValue={''}
-            currentValue={String(formik.values.language)}
+            itemList={LANGUAGE_LIST}
+            value={String(formik.values.language)}
             onChange={(value) => formik.setFieldValue('language', value)}
             label={'Язык'}
             placeholder={'Язык'}
@@ -105,7 +105,7 @@ export const SignUpForm: React.FC = () => {
             error={formik.errors.language}
           />
         </ElementWrap>
-        <ElementWrap marginTop={31}>
+        <ElementWrap marginTop={16}>
           <TermsWrap>
             <Checkbox {...formik.getFieldProps('accept')} />
             <div>

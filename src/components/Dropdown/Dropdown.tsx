@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { DropdownProps } from './types';
 import { useOutsideClick } from './useOutsideClick';
@@ -6,32 +6,40 @@ import icon from './icons/Icon.svg';
 
 export const Dropdown: React.FC<DropdownProps> = ({
   itemList,
-  defaultValue,
-  currentValue,
+  value,
   onChange,
   label,
   placeholder,
   onBlur,
   name,
 }) => {
+  //флаг отвечает за показ списка элементов
   const [isShowItemList, setIsShowItemList] = useState<boolean>(false);
 
+  //выбранный текущий элемент, при управлении с клавиатуры
   const [selectedItemId, setSelectedItemId] = useState<number>(0);
 
+  //флаг отвечает за то были ли нажаты Enter или Tab, что считается
+  // успешным выбором элемента пользователем при управлении с клавиатуры
   const [isEnterOrTabKeyPressed, setIsEnterOrTabKeyPressed] =
     useState<boolean>(false);
 
-  const ref = useRef<HTMLDivElement>(null);
-
+  //этот хук срабатывает если во время показа списка были нажаты
+  //Enter или Tab, что считается успешным выбором элемента пользователем
+  //при управлении с клавиатуры
   useEffect(() => {
     if (isEnterOrTabKeyPressed) {
-      onChange(itemList[selectedItemId]);
+      onChange(itemList[selectedItemId].value);
       setIsEnterOrTabKeyPressed(false);
     }
   }, [isEnterOrTabKeyPressed]);
 
+  //этот хук отвечает за скрытие списка
+  //при щелчке вне пределов Компонента
+  const ref = useRef<HTMLDivElement>(null);
   useOutsideClick(ref, () => setIsShowItemList(false));
 
+  //этот хук отвечает за обработку клавиш когда отображается список элементов
   useEffect(() => {
     //обработка нажатий клавиш
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -46,6 +54,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
         setIsEnterOrTabKeyPressed(true);
         setIsShowItemList(false);
       }
+      //перемещаемся по списку вверх нажимая стрелку вверх
       if (e.key === 'ArrowUp') {
         setSelectedItemId((prev) => {
           if (prev === 0) {
@@ -54,6 +63,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
           return prev - 1;
         });
       }
+      //перемещаемся по списку вниз нажимая стрелку вверх
       if (e.key === 'ArrowDown') {
         setSelectedItemId((prev) => {
           if (prev === itemList.length - 1) {
@@ -64,20 +74,24 @@ export const Dropdown: React.FC<DropdownProps> = ({
       }
     };
 
-    //вешаем обработчик при открытии списка
     if (isShowItemList) {
+      //убираем или добавляем обработчики нажатия клавиш, в зависимости
+      //от показа списка элементов
+      document.removeEventListener('keydown', handleKeyPressed);
       document.addEventListener('keydown', handleKeyDown);
     }
 
     return () => {
-      //убираем обработчик при закрытии списка
+      //убираем или добавляем обработчики нажатия клавиш, в зависимости
+      //от показа списка элементов
       document.removeEventListener('keydown', handleKeyDown);
+      document.addEventListener('keydown', handleKeyPressed);
     };
   }, [isShowItemList]);
 
   const handleBtnClk = () => {
     setIsShowItemList((prev) => !prev);
-    const currentItemIndex = itemList.findIndex((item) => item === value);
+    const currentItemIndex = itemList.findIndex((item) => item.value === value);
     if (currentItemIndex >= 0) {
       setSelectedItemId(currentItemIndex);
     }
@@ -91,14 +105,35 @@ export const Dropdown: React.FC<DropdownProps> = ({
   const itemListRender = itemList.map((item, index) => (
     <Item
       key={index}
-      onClick={() => handleItemClk(item)}
+      onClick={() => handleItemClk(item.value)}
       isSelected={selectedItemId === index}
     >
-      {item}
+      {item.title}
     </Item>
   ));
 
-  const value = itemList.includes(currentValue) ? currentValue : defaultValue;
+  const getTitle = (): string => {
+    const index = itemList.findIndex((item) => item.value === value);
+    if (index >= 0) {
+      return itemList[index].title;
+    }
+    return placeholder;
+  };
+
+  const title = getTitle();
+
+  //этот обработчик нажатия кнопок срабатывает
+  //когда главный элемент управления данного компонента(StyledButton) получает фокус
+  const handleKeyPressed = useCallback(
+    (e: KeyboardEvent) => {
+      //по нажатию стрелки вниз
+      //раскрывается список
+      if (e.key === 'ArrowDown') {
+        setIsShowItemList(true);
+      }
+    },
+    [setIsShowItemList],
+  );
 
   return (
     <Wrap ref={ref}>
@@ -109,11 +144,17 @@ export const Dropdown: React.FC<DropdownProps> = ({
         <StyledButton
           type={'button'}
           onClick={handleBtnClk}
-          isPlaceholderTextStyle={!value}
-          onBlur={onBlur}
+          isPlaceholderTextStyle={title === placeholder}
+          onBlur={(e) => {
+            onBlur(e);
+            document.removeEventListener('keydown', handleKeyPressed);
+          }}
+          onFocus={() => {
+            document.addEventListener('keydown', handleKeyPressed);
+          }}
           name={name}
         >
-          {value ? value : placeholder}
+          {title}
         </StyledButton>
       </ButtonWrap>
       {isShowItemList ? <ItemListWrap>{itemListRender}</ItemListWrap> : null}
@@ -153,6 +194,7 @@ const Item = styled.button<{ isSelected: boolean }>`
 const ItemListWrap = styled.div`
   width: 100%;
   position: absolute;
+  z-index: 100;
   margin-top: 4px;
   background: #ffffff;
   border: 1px solid #dbe2ea;
