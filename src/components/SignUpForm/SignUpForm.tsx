@@ -82,9 +82,11 @@ export const SignUpForm: React.FC = () => {
         <ElementWrap marginTop={8}>
           <Dropdown
             itemList={languageList}
-            defaultValue={'язык'}
+            defaultValue={''}
             currentValue={String(formik.values.language)}
             onChange={(value) => formik.setFieldValue('language', value)}
+            label={'Язык'}
+            placeholder={'Язык'}
           />
         </ElementWrap>
         <ElementWrap marginTop={31}>

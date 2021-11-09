@@ -70,7 +70,6 @@ const StyledInput = styled.input`
 const Wrap = styled.div``;
 
 const Label = styled.label`
-  font-family: IBM Plex Sans, sans-serif;
   font-style: normal;
   font-weight: 500;
   font-size: 16px;

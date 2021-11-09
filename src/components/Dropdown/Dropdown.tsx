@@ -9,6 +9,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
   defaultValue,
   currentValue,
   onChange,
+  label,
+  placeholder,
 }) => {
   const [isShowItemList, setIsShowItemList] = useState<boolean>(false);
 
@@ -98,9 +100,16 @@ export const Dropdown: React.FC<DropdownProps> = ({
 
   return (
     <Wrap ref={ref}>
+      <div>
+        <Label>{label}</Label>
+      </div>
       <ButtonWrap>
-        <StyledButton type={'button'} onClick={handleBtnClk}>
-          {value}
+        <StyledButton
+          type={'button'}
+          onClick={handleBtnClk}
+          isPlaceholderTextStyle={!value}
+        >
+          {value ? value : placeholder}
         </StyledButton>
       </ButtonWrap>
       {isShowItemList ? <ItemListWrap>{itemListRender}</ItemListWrap> : null}
@@ -150,7 +159,7 @@ const ItemListWrap = styled.div`
   padding: 6px 0;
 `;
 
-const StyledButton = styled.button`
+const StyledButton = styled.button<{ isPlaceholderTextStyle: boolean }>`
   border: 1px solid #dbe2ea;
   box-sizing: border-box;
   box-shadow: 0 4px 8px rgba(44, 39, 56, 0.04);
@@ -158,6 +167,10 @@ const StyledButton = styled.button`
   padding: 16px;
   outline: none;
   width: 100%;
+  height: 52px;
+
+  ${({ isPlaceholderTextStyle }) =>
+    isPlaceholderTextStyle ? 'color: #7c9cbf' : ''};
 
   font-size: 16px;
   font-style: normal;
@@ -176,4 +189,12 @@ const StyledButton = styled.button`
   }
 
   background: #ffffff url(${icon}) no-repeat right 11px top 50%;
+`;
+
+const Label = styled.label`
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 21px;
+  color: #756f86;
 `;

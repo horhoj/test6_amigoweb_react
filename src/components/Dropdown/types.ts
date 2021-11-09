@@ -3,4 +3,6 @@ export interface DropdownProps {
   defaultValue: string;
   currentValue: string;
   onChange: (value: string) => void;
+  label: string;
+  placeholder: string;
 }
