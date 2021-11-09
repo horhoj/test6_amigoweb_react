@@ -40,9 +40,9 @@ const StyledInput = styled.input`
 `;
 
 const checkboxEmulatorIsCheckedStyledOverride = css`
-  border: 2px solid #0880ae;
   background-image: url(${icon});
   background-repeat: no-repeat;
+  background-position: center;
 `;
 
 const CheckboxEmulator = styled.div<{ isChecked: boolean; isFocused: boolean }>`
