@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { DropdownProps } from './types';
 import { useOutsideClick } from './useOutsideClick';
@@ -12,12 +12,71 @@ export const Dropdown: React.FC<DropdownProps> = ({
 }) => {
   const [isShowItemList, setIsShowItemList] = useState<boolean>(false);
 
+  const [selectedItemId, setSelectedItemId] = useState<number>(0);
+
+  const [isEnterOrTabKeyPressed, setIsEnterOrTabKeyPressed] =
+    useState<boolean>(false);
+
   const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isEnterOrTabKeyPressed) {
+      onChange(itemList[selectedItemId]);
+      setIsEnterOrTabKeyPressed(false);
+    }
+  }, [isEnterOrTabKeyPressed]);
 
   useOutsideClick(ref, () => setIsShowItemList(false));
 
+  useEffect(() => {
+    //обработка нажатий клавиш
+    const handleKeyDown = (e: KeyboardEvent) => {
+      e.preventDefault();
+      //захлопываем по escape
+      if (e.key === 'Escape') {
+        setIsShowItemList(false);
+      }
+      // захлопываем по Enter или Tab
+      // и меняем значение
+      if (e.key === 'Enter' || e.key === 'Tab') {
+        setIsEnterOrTabKeyPressed(true);
+        setIsShowItemList(false);
+      }
+      if (e.key === 'ArrowUp') {
+        setSelectedItemId((prev) => {
+          if (prev === 0) {
+            return 0;
+          }
+          return prev - 1;
+        });
+      }
+      if (e.key === 'ArrowDown') {
+        setSelectedItemId((prev) => {
+          if (prev === itemList.length - 1) {
+            return prev;
+          }
+          return prev + 1;
+        });
+      }
+    };
+
+    //вешаем обработчик при открытии списка
+    if (isShowItemList) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      //убираем обработчик при закрытии списка
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isShowItemList]);
+
   const handleBtnClk = () => {
     setIsShowItemList((prev) => !prev);
+    const currentItemIndex = itemList.findIndex((item) => item === value);
+    if (currentItemIndex >= 0) {
+      setSelectedItemId(currentItemIndex);
+    }
   };
 
   const handleItemClk = (value: string) => {
@@ -26,7 +85,11 @@ export const Dropdown: React.FC<DropdownProps> = ({
   };
 
   const itemListRender = itemList.map((item, index) => (
-    <Item key={index} onClick={() => handleItemClk(item)}>
+    <Item
+      key={index}
+      onClick={() => handleItemClk(item)}
+      isSelected={selectedItemId === index}
+    >
       {item}
     </Item>
   ));
@@ -36,7 +99,6 @@ export const Dropdown: React.FC<DropdownProps> = ({
   return (
     <Wrap ref={ref}>
       <ButtonWrap>
-        {/*<Icon src={icon} alt="" />*/}
         <StyledButton type={'button'} onClick={handleBtnClk}>
           {value}
         </StyledButton>
@@ -52,7 +114,7 @@ const Wrap = styled.div`
 
 const ButtonWrap = styled.div``;
 
-const Item = styled.div`
+const Item = styled.button<{ isSelected: boolean }>`
   height: 44px;
   font-size: 16px;
   font-style: normal;
@@ -60,10 +122,15 @@ const Item = styled.div`
   line-height: 21px;
   text-align: left;
   display: flex;
+  width: 100%;
+  border: none;
+
   justify-content: start;
   align-items: center;
   padding: 0 15px;
   cursor: pointer;
+
+  background-color: ${({ isSelected }) => (isSelected ? '#ebf4f8' : '#fff')};
 
   :hover {
     background-color: #ebf4f8;
